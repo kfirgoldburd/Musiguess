@@ -137,14 +137,11 @@ Anti-Hero|Taylor Swift|2022
 As It Was|Harry Styles|2022
 Flowers|Miley Cyrus|2023`;
 const ISRAW=`ירושלים של זהב|שולי נתן|1967|Yerushalayim Shel Zahav Shuli Natan
-שיר לשלום|להקת הנח״ל|1969|Shir Lashalom Nahal Band
 אי שם|אילנית|1973|Ilanit Ey Sham
 א-בא-ני-בי|יזהר כהן ואלפא-בטא|1978|Izhar Cohen A-Ba-Ni-Bi
 הללויה|מילק אנד האני|1979|Milk and Honey Hallelujah
 חי|עפרה חזה|1983|Ofra Haza Hai
-אים נין אלו|עפרה חזה|1984|Ofra Haza Im Nin Alu
 דיווה|דנה אינטרנשיונל|1998|Dana International Diva
-שירת הסטיקר|הדג נחש|2004|Hadag Nahash Shirat Hasticker
 השקט שנשאר|שירי מימון|2005|Shiri Maimon Hasheket Shenish'ar
 Push the Button|טיפקס|2007|Teapacks Push the Button
 The Fire in Your Eyes|בועז מעודה|2008|Boaz Mauda The Fire in Your Eyes
@@ -158,7 +155,311 @@ I.M|מייקל בן דוד|2022|Michael Ben David I.M
 Unicorn|נועה קירל|2023|Noa Kirel Unicorn
 Hurricane|עדן גולן|2024|Eden Golan Hurricane`;
 const mk=(raw,o)=>raw.split("\n").map((l,i)=>{const[t,a,y,q]=l.split("|");return{id:o+i,t,a,y:+y,q}});
-const PK={intl:mk(RAW,0),isr:mk(ISRAW,1000)};PK.mix=[...PK.intl,...PK.isr];
+const BI=`Fever|Peggy Lee|1958
+Rock Around the Clock|Bill Haley & His Comets|1954
+Heartbreak Hotel|Elvis Presley|1956
+Hound Dog|Elvis Presley|1956
+Jailhouse Rock|Elvis Presley|1957
+Johnny B. Goode|Chuck Berry|1958
+La Bamba|Ritchie Valens|1958
+What’d I Say|Ray Charles|1959
+The Twist|Chubby Checker|1960
+Hit the Road Jack|Ray Charles|1961
+Stand by Me|Ben E. King|1961
+Can’t Help Falling in Love|Elvis Presley|1961
+Be My Baby|The Ronettes|1963
+I Want to Hold Your Hand|The Beatles|1963
+You Really Got Me|The Kinks|1964
+House of the Rising Sun|The Animals|1964
+Oh, Pretty Woman|Roy Orbison|1964
+Yesterday|The Beatles|1965
+Help!|The Beatles|1965
+California Dreamin’|The Mamas & the Papas|1965
+Paint It Black|The Rolling Stones|1966
+Wild Thing|The Troggs|1966
+Light My Fire|The Doors|1967
+Sunshine of Your Love|Cream|1967
+Penny Lane|The Beatles|1967
+Mrs. Robinson|Simon & Garfunkel|1968
+Born to Be Wild|Steppenwolf|1968
+Sympathy for the Devil|The Rolling Stones|1968
+Come Together|The Beatles|1969
+Here Comes the Sun|The Beatles|1969
+Suspicious Minds|Elvis Presley|1969
+Proud Mary|Creedence Clearwater Revival|1969
+Whole Lotta Love|Led Zeppelin|1969
+Sweet Caroline|Neil Diamond|1969
+I Want You Back|The Jackson 5|1969
+Layla|Derek and the Dominos|1970
+Your Song|Elton John|1970
+Bridge over Troubled Water|Simon & Garfunkel|1970
+Brown Sugar|The Rolling Stones|1971
+Tiny Dancer|Elton John|1971
+Life on Mars?|David Bowie|1971
+What’s Going On|Marvin Gaye|1971
+Take Me Home, Country Roads|John Denver|1971
+American Pie|Don McLean|1971
+Ain’t No Sunshine|Bill Withers|1971
+Rocket Man|Elton John|1972
+Starman|David Bowie|1972
+Lean on Me|Bill Withers|1972
+Killing Me Softly with His Song|Roberta Flack|1973
+Piano Man|Billy Joel|1973
+Money|Pink Floyd|1973
+Dream On|Aerosmith|1973
+Free Bird|Lynyrd Skynyrd|1973
+Jolene|Dolly Parton|1973
+Killer Queen|Queen|1974
+Sweet Home Alabama|Lynyrd Skynyrd|1974
+Waterloo|ABBA|1974
+Wish You Were Here|Pink Floyd|1975
+Born to Run|Bruce Springsteen|1975
+Mamma Mia|ABBA|1975
+Walk This Way|Aerosmith|1975
+Somebody to Love|Queen|1976
+More Than a Feeling|Boston|1976
+We Will Rock You|Queen|1977
+Go Your Own Way|Fleetwood Mac|1977
+Dreams|Fleetwood Mac|1977
+Heroes|David Bowie|1977
+I Feel Love|Donna Summer|1977
+Three Little Birds|Bob Marley & The Wailers|1977
+Y.M.C.A.|Village People|1978
+Le Freak|Chic|1978
+September|Earth, Wind & Fire|1978
+Roxanne|The Police|1978
+Is This Love|Bob Marley & The Wailers|1978
+Heart of Glass|Blondie|1979
+Highway to Hell|AC/DC|1979
+Hot Stuff|Donna Summer|1979
+Rapper’s Delight|The Sugarhill Gang|1979
+Gimme! Gimme! Gimme!|ABBA|1979
+Back in Black|AC/DC|1980
+Another One Bites the Dust|Queen|1980
+9 to 5|Dolly Parton|1980
+Redemption Song|Bob Marley & The Wailers|1980
+Under Pressure|Queen & David Bowie|1981
+Tainted Love|Soft Cell|1981
+In the Air Tonight|Phil Collins|1981
+Eye of the Tiger|Survivor|1982
+Hungry Like the Wolf|Duran Duran|1982
+Come On Eileen|Dexys Midnight Runners|1982
+Beat It|Michael Jackson|1982
+Jump|Van Halen|1983
+Sweet Dreams (Are Made of This)|Eurythmics|1983
+Time After Time|Cyndi Lauper|1983
+Karma Chameleon|Culture Club|1983
+Total Eclipse of the Heart|Bonnie Tyler|1983
+Holiday|Madonna|1983
+Sunday Bloody Sunday|U2|1983
+Footloose|Kenny Loggins|1984
+Material Girl|Madonna|1984
+Careless Whisper|George Michael|1984
+Last Christmas|Wham!|1984
+Pride (In the Name of Love)|U2|1984
+Shout|Tears for Fears|1984
+Everybody Wants to Rule the World|Tears for Fears|1985
+Running Up That Hill|Kate Bush|1985
+Don’t You (Forget About Me)|Simple Minds|1985
+Walking on Sunshine|Katrina and the Waves|1985
+How Will I Know|Whitney Houston|1985
+Papa Don’t Preach|Madonna|1986
+True Colors|Cyndi Lauper|1986
+You Give Love a Bad Name|Bon Jovi|1986
+Walk Like an Egyptian|The Bangles|1986
+Take My Breath Away|Berlin|1986
+Danger Zone|Kenny Loggins|1986
+The Final Countdown|Europe|1986
+Lady in Red|Chris de Burgh|1986
+Bad|Michael Jackson|1987
+Man in the Mirror|Michael Jackson|1987
+Smooth Criminal|Michael Jackson|1987
+I Wanna Dance with Somebody|Whitney Houston|1987
+Welcome to the Jungle|Guns N’ Roses|1987
+Where the Streets Have No Name|U2|1987
+Pour Some Sugar on Me|Def Leppard|1987
+Faith|George Michael|1987
+Fast Car|Tracy Chapman|1988
+Don’t Worry, Be Happy|Bobby McFerrin|1988
+Another Day in Paradise|Phil Collins|1989
+Like a Prayer|Madonna|1989
+Nothing Compares 2 U|Sinéad O’Connor|1990
+Enjoy the Silence|Depeche Mode|1990
+Wind of Change|Scorpions|1990
+Ice Ice Baby|Vanilla Ice|1990
+U Can’t Touch This|MC Hammer|1990
+Friends in Low Places|Garth Brooks|1990
+Black or White|Michael Jackson|1991
+Enter Sandman|Metallica|1991
+Nothing Else Matters|Metallica|1991
+Come as You Are|Nirvana|1991
+Give It Away|Red Hot Chili Peppers|1991
+Under the Bridge|Red Hot Chili Peppers|1992
+Tears in Heaven|Eric Clapton|1992
+Everybody Hurts|R.E.M.|1992
+Jump Around|House of Pain|1992
+Rhythm Is a Dancer|Snap!|1992
+Informer|Snow|1992
+What Is Love|Haddaway|1993
+No Limit|2 Unlimited|1993
+Waterfalls|TLC|1994
+Black Hole Sun|Soundgarden|1994
+Basket Case|Green Day|1994
+Juicy|The Notorious B.I.G.|1994
+Kiss from a Rose|Seal|1994
+Cotton Eye Joe|Rednex|1994
+Gin and Juice|Snoop Doggy Dogg|1994
+Insomnia|Faithless|1995
+You Oughta Know|Alanis Morissette|1995
+Don’t Look Back in Anger|Oasis|1995
+California Love|2Pac|1995
+I’ll Be There for You|The Rembrandts|1995
+Back for Good|Take That|1995
+Don’t Speak|No Doubt|1995
+Children|Robert Miles|1995
+Ironic|Alanis Morissette|1996
+Hypnotize|The Notorious B.I.G.|1997
+Around the World|Daft Punk|1997
+Bitter Sweet Symphony|The Verve|1997
+Song 2|Blur|1997
+Semi-Charmed Life|Third Eye Blind|1997
+Truly Madly Deeply|Savage Garden|1997
+Everybody (Backstreet’s Back)|Backstreet Boys|1997
+Believe|Cher|1998
+Iris|Goo Goo Dolls|1998
+Blue (Da Ba Dee)|Eiffel 65|1998
+Livin’ la Vida Loca|Ricky Martin|1999
+Smooth|Santana ft. Rob Thomas|1999
+Mambo No. 5|Lou Bega|1999
+Sandstorm|Darude|1999
+Genie in a Bottle|Christina Aguilera|1999
+I Want It That Way|Backstreet Boys|1999
+Bye Bye Bye|*NSYNC|2000
+Beautiful Day|U2|2000
+One More Time|Daft Punk|2000
+In the End|Linkin Park|2000
+The Real Slim Shady|Eminem|2000
+Stan|Eminem|2000
+Whenever, Wherever|Shakira|2001
+Chop Suey!|System of a Down|2001
+Without Me|Eminem|2002
+Cry Me a River|Justin Timberlake|2002
+The Scientist|Coldplay|2002
+Beautiful|Christina Aguilera|2002
+Complicated|Avril Lavigne|2002
+Sk8er Boi|Avril Lavigne|2002
+Dilemma|Nelly|2002
+Numb|Linkin Park|2003
+Where Is the Love?|Black Eyed Peas|2003
+Dragostea Din Tei|O-Zone|2003
+Yeah!|Usher|2004
+Since U Been Gone|Kelly Clarkson|2004
+American Idiot|Green Day|2004
+Boulevard of Broken Dreams|Green Day|2004
+Drop It Like It’s Hot|Snoop Dogg|2004
+Gasolina|Daddy Yankee|2004
+La Camisa Negra|Juanes|2004
+Fix You|Coldplay|2005
+Hung Up|Madonna|2005
+Gold Digger|Kanye West|2005
+SexyBack|Justin Timberlake|2006
+Rehab|Amy Winehouse|2006
+Crazy|Gnarls Barkley|2006
+Stronger|Kanye West|2007
+Bleeding Love|Leona Lewis|2007
+Viva la Vida|Coldplay|2008
+Halo|Beyoncé|2008
+Just Dance|Lady Gaga|2008
+I Kissed a Girl|Katy Perry|2008
+Love Story|Taylor Swift|2008
+Bad Romance|Lady Gaga|2009
+You Belong with Me|Taylor Swift|2009
+I Gotta Feeling|Black Eyed Peas|2009
+Empire State of Mind|Jay-Z & Alicia Keys|2009
+Teenage Dream|Katy Perry|2010
+Firework|Katy Perry|2010
+Waka Waka|Shakira|2010
+Danza Kuduro|Don Omar|2010
+Moves Like Jagger|Maroon 5|2011
+Titanium|David Guetta ft. Sia|2011
+Levels|Avicii|2011
+Let Her Go|Passenger|2012
+Radioactive|Imagine Dragons|2012
+Thrift Shop|Macklemore & Ryan Lewis|2012
+Clarity|Zedd|2012
+Wake Me Up|Avicii|2013
+Counting Stars|OneRepublic|2013
+All of Me|John Legend|2013
+Blurred Lines|Robin Thicke|2013
+Wrecking Ball|Miley Cyrus|2013
+Roar|Katy Perry|2013
+Dark Horse|Katy Perry|2013
+Vivir Mi Vida|Marc Anthony|2013
+Animals|Martin Garrix|2013
+Stay with Me|Sam Smith|2014
+Chandelier|Sia|2014
+Blank Space|Taylor Swift|2014
+Bailando|Enrique Iglesias|2014
+Sugar|Maroon 5|2015
+Hotline Bling|Drake|2015
+Sorry|Justin Bieber|2015
+Love Yourself|Justin Bieber|2015
+Love Me Like You Do|Ellie Goulding|2015
+Lean On|Major Lazer & DJ Snake|2015
+Can’t Stop the Feeling!|Justin Timberlake|2016
+One Dance|Drake|2016
+Closer|The Chainsmokers|2016
+Cheap Thrills|Sia|2016
+Perfect|Ed Sheeran|2017
+Believer|Imagine Dragons|2017
+Havana|Camila Cabello|2017
+Rockstar|Post Malone|2017
+New Rules|Dua Lipa|2017
+HUMBLE.|Kendrick Lamar|2017
+Mi Gente|J Balvin|2017
+Shallow|Lady Gaga & Bradley Cooper|2018
+God’s Plan|Drake|2018
+Sicko Mode|Travis Scott|2018
+Someone You Loved|Lewis Capaldi|2018
+Sunflower|Post Malone|2018
+Señorita|Shawn Mendes & Camila Cabello|2019
+Truth Hurts|Lizzo|2019
+Dance Monkey|Tones and I|2019
+Don’t Start Now|Dua Lipa|2019
+Circles|Post Malone|2019
+Sucker|Jonas Brothers|2019
+Dynamite|BTS|2020
+Dákiti|Bad Bunny & Jhay Cortez|2020
+Heat Waves|Glass Animals|2020
+drivers license|Olivia Rodrigo|2021
+Butter|BTS|2021
+Peaches|Justin Bieber|2021
+Easy on Me|Adele|2021
+Industry Baby|Lil Nas X & Jack Harlow|2021
+Tití Me Preguntó|Bad Bunny|2022
+Unholy|Sam Smith & Kim Petras|2022
+Vampire|Olivia Rodrigo|2023
+Espresso|Sabrina Carpenter|2024
+Not Like Us|Kendrick Lamar|2024
+Birds of a Feather|Billie Eilish|2024
+Die with a Smile|Lady Gaga & Bruno Mars|2024`;
+const BH=`גבר הולך לאיבוד|שלמה ארצי|1978|Shlomo Artzi Gever Holech Le'ibud
+טיפת מזל|זהבה בן|1988|Zehava Ben Tipat Mazal
+אולה אולה|יזהר כהן|1985|Izhar Cohen Ole Ole
+בן אדם|ירדנה ארזי|1988|Yardena Arazi Ben Adam
+הורה|אבי טולדנו|1982|Avi Toledano Hora
+שמח|פינג פונג|2000|Ping Pong Sameach
+יום הולדת|עדן|1999|Eden Yom Huledet
+There Must Be Another Way|נועה ומירה עוואד|2009|Noa Mira Awad There Must Be Another Way
+Ding Dong|דנה אינטרנשיונל|2011|Dana International Ding Dong
+Golden Boy|נדב גדג׳|2015|Nadav Guedj Golden Boy
+שיר השכונה|התרנגולים|1963|Shir Hashchuna Hatarnegolim
+נתתי לה חיי|כוורת|1974|Kaveret Natati La Chayai
+סליחות|יהודית רביץ|1977|Yehudit Ravitz Slichot
+אין לי ארץ אחרת|גלי עטרי|1986|Gali Atari Ein Li Eretz Acheret
+אפר ואבק|יהודה פוליקר|1988|Yehuda Poliker Efer Va'avak
+חיים שלי|עדן בן זקן|2018|Eden Ben Zaken Chayim Sheli`;
+const PK={intl:[...mk(RAW,0),...mk(BI,2000)],isr:[...mk(ISRAW,1000),...mk(BH,3000)]};PK.mix=[...PK.intl,...PK.isr];
 const AC={};let au,tok=0;
 const $=s=>document.querySelector(s);
 const hue=s=>(s.y*7+s.t.length*29)%360;
@@ -191,9 +492,9 @@ function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)(
 /* ---------- game state ---------- */
 let G={cnt:2,target:10,pack:"intl",names:["","","",""]};
 function start(){
-  const deck=shuffle(PK[G.pack]);
-  G.players=Array.from({length:G.cnt},(_,i)=>({n:G.names[i].trim()||'שחקן '+(i+1),tl:[deck.pop()]}));
-  G.deck=deck;G.cur=0;G.slot=null;G.song=null;
+  const seen=ls.get();let pool=PK[G.pack].filter(x=>!seen.includes(x.id));if(pool.length<G.cnt*(G.target+2)){ls.set(seen.filter(id=>!PK[G.pack].some(x=>x.id===id)));pool=PK[G.pack]}const deck=shuffle(pool);
+  G.players=Array.from({length:G.cnt},(_,i)=>({n:G.names[i].trim()||'שחקן '+(i+1),tl:[deck.pop()],sh:0,sw:0}));
+  G.deck=deck;G.players.forEach(p=>markSeen(p.tl[0].id));G.cur=0;G.slot=null;G.song=null;
   G.cnt===1?turn():pass();
 }
 function pass(){
@@ -204,26 +505,41 @@ function turn(fresh=true){
   if(fresh||!G.song){if(!G.deck.length)G.deck=shuffle(PK[G.pack]);G.song=G.deck.pop();G.slot=null;preview(G.song);}
   const p=G.players[G.cur];
   let tl='';for(let i=0;i<=p.tl.length;i++){tl+=`<button class="slot ${G.slot===i?'sel':''}" onclick="pick(${i})">${i==0?'לפני השיר הראשון':i==p.tl.length?'אחרי השיר האחרון':'בין השניים'}</button>`;if(i<p.tl.length)tl+=songRow(p.tl[i]);}
-  $('#app').innerHTML=`<div class="bar"><span>התור של</span><span><b>${p.n}</b></span><span>${p.tl.length}/${G.target}</span></div>
+  $('#app').innerHTML=`<div class="bar"><span>התור של</span><span><b>${p.n}</b></span><span>${p.sh?'🛡️'.repeat(p.sh)+' ':''}${p.tl.length}/${G.target}</span></div>
   <div class="player"><button class="disc" aria-label="נגן" onclick="playSong(G.song)">▶</button><div class="prog"><i></i></div>
-  <div class="row"><button class="soft" onclick="turn(true)">דלגו לשיר אחר</button><button class="soft" onclick="playSong(G.song)">נסו שוב</button></div>
+  <div class="row"><button class="soft" onclick="turn(true)">לא מתנגן, שיר אחר</button><button class="soft" style="flex-basis:100%" ${p.sw?'disabled':''} onclick="swap()">לא מכיר? החלפת שיר (פעם אחת)</button><button class="soft" onclick="playSong(G.song)">נסו שוב</button></div>
   <p class="note" style="margin:10px 0 0"><span class="mock" id="mock" style="display:none">השמע האמיתי לא זמין כאן, מתנגנת מנגינה בדויה</span></p></div>
   <h2>איפה השיר על הציר?</h2><div class="tl">${tl}</div>
   <button class="big" ${G.slot===null?'disabled':''} onclick="confirmPlace()">אישור</button>`;
 }
 function pick(i){G.slot=i;const y=scrollY;turn(false);scrollTo(0,y)}
 function confirmPlace(){
-  stopAudio();const p=G.players[G.cur],s=G.song,i=G.slot;
+  let i=G.slot;stopAudio();const p=G.players[G.cur],s=G.song;markSeen(s.id);
   const prev=i>0?p.tl[i-1].y:-Infinity,next=i<p.tl.length?p.tl[i].y:Infinity;
-  const ok=prev<=s.y&&s.y<=next;
+  let ok=prev<=s.y&&s.y<=next,saved=false;
+  if(!ok&&(p.sh||0)>0){p.sh--;saved=true;ok=true;i=p.tl.filter(x=>x.y<=s.y).length}
   if(ok)p.tl.splice(i,0,s);
+  if(ok&&!saved)return bonus(s);
+  res(ok,saved,null);
+}
+function res(ok,saved,bn){
+  const p=G.players[G.cur],s=G.song;
   const win=ok&&p.tl.length>=G.target;
-  $('#app').innerHTML=`<div class="center"><div class="res ${ok?'ok':'bad'}">${ok?'צדקת!':'לא הפעם'}</div>
-  <p class="sub">${ok?'השיר נשאר על הציר שלך':'השיר יצא מהמשחק'}</p></div>
+  $('#app').innerHTML=`<div class="center"><div class="res ${ok?'ok':'bad'}">${saved?'כמעט!':ok?'צדקת!':'לא הפעם'}</div>
+  <p class="sub">${saved?'המגן הציל אותך, השיר ממוקם במקום הנכון':ok?'השיר נשאר על הציר שלך':'השיר יצא מהמשחק'}</p>${bn===true?'<p class="sub">🛡️ הבונוס נכון, קיבלת מגן מטעות עתידית</p>':bn===false?'<p class="sub">הבונוס לא הצליח הפעם</p>':''}</div>
   <div class="tl" style="margin-top:16px">${songRow(s,'new')}</div>
   ${ok?`<h2>הציר שלך</h2><div class="tl">${p.tl.map(x=>songRow(x,x===s?'new':'')).join('')}</div>`:''}
   <button class="big" onclick="${win?'finish()':'next()'}">${win?'לסיום':G.players.length>1?'התור הבא':'שיר הבא'}</button>`;
 }
+const ls={get(){try{return JSON.parse(localStorage.getItem('tzir_seen')||'[]')}catch(e){return[]}},set(a){try{localStorage.setItem('tzir_seen',JSON.stringify(a))}catch(e){}}};
+function markSeen(id){const a=ls.get();if(!a.includes(id)){a.push(id);ls.set(a)}}
+function swap(){G.players[G.cur].sw=1;turn(true)}
+function bonus(s){
+  const pool=PK[G.pack].filter(x=>x.a!==s.a);
+  const opts=shuffle([s,...shuffle(pool).slice(0,3)]);
+  $('#app').innerHTML=`<div class="center"><div class="res ok">צדקת! שאלת בונוס</div><p class="sub">מה השיר ומי המבצע? תשובה נכונה נותנת מגן מטעות עתידית.</p></div><div class="tl" style="margin-top:14px;gap:8px">${opts.map(o=>`<button style="text-align:start" onclick="ans(${o.id})"><b>${o.t}</b><small style="display:block;color:var(--mute)">${o.a}</small></button>`).join('')}</div><button class="big" style="background:transparent;color:var(--mute);border-color:var(--line)" onclick="ans(-1)">דלגו על הבונוס</button>`;
+}
+function ans(id){const p=G.players[G.cur];const bn=id===-1?null:id===G.song.id;if(bn)p.sh=(p.sh||0)+1;res(true,false,bn)}
 function next(){G.cur=(G.cur+1)%G.players.length;G.players.length>1?pass():turn()}
 function finish(){
   const p=G.players[G.cur],ys=p.tl.map(x=>x.y);
@@ -235,11 +551,11 @@ function finish(){
 function home(){
   stopAudio();
   $('#app').innerHTML=`<h1>ציר</h1><p class="sub">שומעים, מנחשים שנה, בונים ציר זמן מוזיקלי.</p>
-  <h2>חבילת שירים</h2><div class="row">${[['intl','בינלאומית'],['isr','ישראלית'],['mix','מעורב']].map(([k,n])=>`<button class="pack ${G.pack==k?'on':''}" onclick="G.pack='${k}';home()">${n}</button>`).join('')}</div>${G.pack!='intl'?'<p class="note" style="text-align:start">החבילה הישראלית עדיין טיוטה: 22 שירים, בעיקר מהאירוויזיון, והשנים טרם אומתו.</p>':''}
+  <h2>חבילת שירים</h2><div class="row">${[['intl','בינלאומית'],['isr','ישראלית'],['mix','מעורב']].map(([k,n])=>`<button class="pack ${G.pack==k?'on':''}" onclick="G.pack='${k}';home()">${n}</button>`).join('')}</div>${G.pack!='intl'?'<p class="note" style="text-align:start">החבילה הישראלית קטנה: 34 שירים, בעיקר מהאירוויזיון, ושנות היציאה אומתו.</p>':''}
   <h2>כמה שחקנים?</h2><div class="row">${[1,2,3,4].map(n=>`<button class="pack ${G.cnt==n?'on':''}" onclick="G.cnt=${n};syncNames();home()">${n}</button>`).join('')}</div>
   <h2>שמות</h2>${Array.from({length:G.cnt},(_,i)=>`<input id="n${i}" placeholder="שחקן ${i+1}" value="${G.names[i]}" maxlength="14" oninput="G.names[${i}]=this.value">`).join('')}
   <h2>יעד לניצחון</h2><div class="row">${[7,10,15].map(n=>`<button class="pack ${G.target==n?'on':''}" onclick="G.target=${n};home()">${n} שירים</button>`).join('')}</div>
-  <div class="row" style="margin-top:18px;align-items:center"><button onclick="beep()">בדיקת שמע</button><span id="snd" class="sub" style="margin:0"></span></div>
+  <p class="note" style="text-align:start">שירים ששוחקו לא חוזרים בערבים הבאים. <a href="#" onclick="ls.set([]);home();return false" style="color:var(--acc)">איפוס</a></p><div class="row" style="margin-top:18px;align-items:center"><button onclick="beep()">בדיקת שמע</button><span id="snd" class="sub" style="margin:0"></span></div>
   <button class="big" onclick="start()">יוצאים לדרך</button>`;
 }
 function syncNames(){}
