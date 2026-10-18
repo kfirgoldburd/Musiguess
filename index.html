@@ -9,9 +9,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ציר">
+<meta name="apple-mobile-web-app-title" content="ניחושיר">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ציר – משחק הזמן המוזיקלי</title>
+<title>ניחושיר – משחק הזמן המוזיקלי</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#efeaff;--bg2:#ddd1ff;--ink:#1f1a4d;--card:#fffdf8;--mute:#6a6595;--acc:#d6306f;--acc2:#f2b01e;--ok:#16895a;--bad:#c8372d;--line:#c9c1ee;--sh:0 5px 0 rgba(31,26,77,.16);
@@ -86,6 +86,34 @@ input{font:inherit;width:100%;padding:12px 14px;border-radius:14px;border:2px so
 @keyframes fall{to{transform:translateY(108vh) rotate(720deg)}}
 .trophy{font-size:72px;line-height:1;animation:pop .6s}
 .sb{display:flex;align-items:center;gap:10px;margin-top:8px}.sb b{margin-inline-start:auto;font-size:20px}
+.tvb{padding:6px 12px;border-color:var(--line);color:var(--mute);font-size:14px}
+.sheet{position:fixed;inset:0;background:rgba(10,8,40,.6);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:var(--card);border:2px solid var(--ink);border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));width:100%;max-width:520px;max-height:85vh;overflow:auto}
+.sheet li{margin:8px 0;line-height:1.5}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:16px;right:16px;margin:auto;width:fit-content;max-width:90%;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:70;animation:in .3s;text-align:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{padding:8px 12px;font-size:14px;border-radius:20px}
+.tv-grid{display:block}
+body.wide #app{max-width:none;padding:12px 24px 20px}
+body.wide #app:not(:has(.tv-grid)):not(:has(.fin)){max-width:720px}
+body.wide #app:has(.fin){max-width:1300px}
+body.wide .tv-grid{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:20px;align-items:start}
+body.wide .disc{width:84px;height:84px}
+body.wide .tl{flex-direction:row;overflow-x:auto;direction:ltr;align-items:stretch;gap:6px;padding:4px 2px 10px}
+body.wide .tl>*{direction:rtl;flex:none}
+body.wide .song{flex-direction:column;justify-content:center;text-align:center;width:150px;border-inline-start:2px solid var(--ink);border-top:8px solid hsl(var(--h,330) 65% 50%);padding:12px 8px;gap:6px}
+body.wide .song .art{width:72px;height:72px}
+body.wide .song .yr{margin:0;font-size:30px}
+body.wide .slot{width:86px;margin:0;font-size:13px;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px}
+body.wide .dock{position:static}
+body.wide h2{margin-top:0}
+.code{font-size:60px;font-weight:800;letter-spacing:10px;direction:ltr;color:var(--acc);margin:2px 0}
+.chipsc{display:flex;gap:8px;flex-wrap:wrap}
+.pl{display:flex;align-items:center;gap:6px;padding:6px 10px;border:2px solid var(--line);border-radius:14px;font-size:14px}
+.pl.cur{border-color:var(--acc);background:var(--card);font-weight:800}.pl.off{opacity:.5}
+.slot:disabled.sel{opacity:1}
+div.disc{cursor:default}
+body.wide #app:has(.fin) .tl{flex-wrap:wrap;direction:rtl;justify-content:center;overflow:visible}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.cf{display:none}}
 </style>
 </head>
@@ -644,7 +672,7 @@ function playMock(song){
 }
 async function preview(s){if(AC[s.id]!==undefined)return AC[s.id];let r=null,ok=false;for(const cc of ['','&country=IL']){if(r)break;try{const c=new AbortController();setTimeout(()=>c.abort(),3500);const j=await(await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=3'+cc+'&term='+encodeURIComponent(s.q||s.t+' '+s.a),{signal:c.signal})).json();ok=true;const x=(j.results||[]).find(v=>v.previewUrl);if(x)r={u:x.previewUrl,art:(x.artworkUrl100||'').replace('100x100','300x300')}}catch(e){}}if(!r&&ok){NA.add(s.id);saveNA()}AC[s.id]=r;return r}
 function prog30(){const k=Math.min((performance.now()-t0)/30000,1);const p=$('.prog i');if(p)p.style.width=k*100+'%',tmUp(k);if(k<1)raf=requestAnimationFrame(prog30)}
-async function playSong(s){stopAudio();const my=++tok,tag=$('#mock');const p=await preview(s);if(my!==tok)return;if(p){try{au=new Audio(p.u);await au.play();tag.style.display='none';$('.disc').classList.add('spin');t0=performance.now();prog30();au.onended=stopAudio;return}catch(e){au=null}}tag.style.display='';playMock(s)}
+async function playSong(s){stopAudio();const my=++tok,tag=$('#mock');const p=await preview(s);if(my!==tok)return;if(p){try{au=MPAUD;au.src=p.u;await au.play();tag.style.display='none';$('.disc').classList.add('spin');t0=performance.now();prog30();au.onended=stopAudio;return}catch(e){au=null}}tag.style.display='';playMock(s)}
 function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=523;g.gain.value=.15;o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.4);$('#snd').textContent='✓ השמע עובד'}catch(e){$('#snd').textContent='השמע לא זמין במכשיר'}}
 
 /* ---------- helpers ---------- */
@@ -667,10 +695,38 @@ function install(){if(dip){dip.prompt();dip.userChoice.finally(()=>{dip=null;hom
 function instCard(){const sa=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;if(sa)return'';
 if(dip)return `<div class="card center"><h2>📲 התקנה כאפליקציה</h2><button class="big" style="margin-top:0" onclick="install()">הוסיפו למסך הבית</button></div>`;
 if(/iphone|ipad|ipod/i.test(navigator.userAgent||''))return `<div class="card"><h2>📲 התקנה כאפליקציה</h2><p class="sub" style="margin:0">בספארי: לחצו על כפתור השיתוף (ריבוע עם חץ) ואז "הוספה למסך הבית".</p></div>`;return''}
+/* ---------- genres ---------- */
+const GL={rock:'🎸 רוק ופולק',pop:'🎤 פופ',hiphop:'🎧 היפ-הופ ורפ',dance:'🪩 דאנס ואלקטרוני',soul:'🎷 סול, R&B ודיסקו',euro:'⭐ אירוויזיון',rockil:'🎸 רוק ישראלי',mizr:'🥁 מזרחית וים-תיכוני',zemer:'🎻 זמר ישראלי'};
+const GM={};[['rock',['The Beatles','The Rolling Stones','Bob Dylan','The Beach Boys','Jimi Hendrix','Queen','Eagles','Led Zeppelin','Deep Purple','Pink Floyd','David Bowie','Guns N’ Roses','The Police','U2','Bon Jovi','Journey','Toto','Nirvana','Oasis','R.E.M.','Radiohead','The Cranberries','Coldplay','The White Stripes','Kings of Leon','Imagine Dragons','Red Hot Chili Peppers','Metallica','Soundgarden','Green Day','Blur','The Verve','Goo Goo Dolls','Third Eye Blind','Linkin Park','System of a Down','AC/DC','Aerosmith','Boston','Fleetwood Mac','Lynyrd Skynyrd','Bruce Springsteen','Creedence Clearwater Revival','The Doors','Cream','The Kinks','The Animals','Steppenwolf','The Troggs','Simon & Garfunkel','Derek and the Dominos','Elton John','Billy Joel','Don McLean','John Denver','Dolly Parton','Garth Brooks','Def Leppard','Europe','Scorpions','Van Halen','Survivor','Simple Minds','Blondie','Glass Animals','Bill Haley & His Comets','Chuck Berry','Ritchie Valens','Roy Orbison','The Mamas & the Papas','Alanis Morissette','No Doubt','Kenny Loggins','Elvis Presley','Bob Marley & The Wailers','Phil Collins','Eric Clapton','Johnny Cash']],
+['hiphop',['Eminem','OutKast','50 Cent','Snow','MC Hammer','Vanilla Ice','Coolio','The Sugarhill Gang','House of Pain','The Notorious B.I.G.','2Pac','Snoop Doggy Dogg','Snoop Dogg','Kanye West','Nelly','Jay-Z & Alicia Keys','Macklemore & Ryan Lewis','Drake','Kendrick Lamar','Travis Scott','Lil Nas X','Lil Nas X & Jack Harlow','Black Eyed Peas','Post Malone']],
+['dance',['Daft Punk','Avicii','Darude','Eiffel 65','Haddaway','2 Unlimited','Snap!','Faithless','Robert Miles','Rednex','Aqua','O-Zone','Lou Bega','Zedd','Martin Garrix','Major Lazer & DJ Snake','David Guetta ft. Sia','The Chainsmokers','Depeche Mode','Soft Cell','Eurythmics','Cher']],
+['soul',['Aretha Franklin','The Temptations','Stevie Wonder','Marvin Gaye','Ben E. King','Ray Charles','Bill Withers','Roberta Flack','Whitney Houston','Earth, Wind & Fire','Chic','Gloria Gaynor','Bee Gees','Donna Summer','Village People','TLC','Beyoncé','Rihanna','Amy Winehouse','Usher','Adele','John Legend','Gnarls Barkley','Michael Jackson','Prince','Seal','The Jackson 5','Sam Smith','Lizzo','Justin Timberlake','The Ronettes','Peggy Lee']],
+['rockil',['שלום חנוך','מאיר אריאל','אביב גפן','ברי סחרוף','משינה','רוקפור','אהוד בנאי','אביתר בנאי','מאיר בנאי','יהודה פוליקר','נושאי המגבעת','הקליק','כוורת','קורין אלאל','החברים של נטאשה','נוער שוליים','פורטיסחרוף','אתניX','שפיות זמנית','מופע הארנבות של ד"ר קספר','תיסלם','בנזין','מוניקה סקס','אסף אמדורסקי','שלמה ארצי','שלמה ארצי וריטה','אריאל זילבר','הנשמות הטהורות','יהודית רביץ','אריק לביא','שמוליק קראוס ואילן וירצברג','אריק איינשטיין ושלום חנוך','מתי כספי','ריקי גל ומתי כספי','אחרית הימים','החלונות הגבוהים','רפי פרסקי','גידי גוב','ריטה','אדם','כמו צועני']],
+['mizr',['זוהר ארגוב','אייל גולן','שרית חדד','בעז שרעבי','עמיר בניון','שימי תבורי','נסים סרוסי','שי גבסו','ליאור נרקיס ושלומי שבת','עדן בן זקן','מירי מסיקה','זהבה בן','עפרה חזה','רמי קלינשטיין','רמי קלינשטיין והמועצה']]].forEach(([g,a])=>a.forEach(x=>GM[x]=g));
+const ET=new Set(['אי שם','א-בא-ני-בי','הללויה','חי','דיווה','השקט שנשאר','Push the Button','The Fire in Your Eyes','מילים','Made of Stars','I Feel Alive','Toy','Home','Set Me Free','I.M','Unicorn','Hurricane','אולה אולה','בן אדם','הורה','שמח','יום הולדת','There Must Be Another Way','Ding Dong','Golden Boy','נתתי לה חיי']);
+const isIL=s=>(s.id>=1000&&s.id<2000)||s.id>=3000;
+const genreOf=s=>isIL(s)?(ET.has(s.t)?'euro':GM[s.a]||'zemer'):(GM[s.a]||'pop');
+const pk=()=>PK[G.pack].filter(s=>G.genre==='all'||genreOf(s)===G.genre);
+function genresFor(){const c={};PK[G.pack].forEach(s=>{const g=genreOf(s);c[g]=(c[g]||0)+1});return Object.entries(c).filter(([k,n])=>n>=15).sort((a,b)=>b[1]-a[1])}
+function chipsHtml(){return `<div class="chips"><button class="chip ${G.genre=='all'?'on':''}" onclick="G.genre='all';home()">הכל</button>${genresFor().map(([k])=>`<button class="chip ${G.genre==k?'on':''}" onclick="G.genre='${k}';home()">${GL[k]}</button>`).join('')}</div>`}
+/* ---------- TV / wide screen ---------- */
+function fit(){const w=innerWidth,hh=innerHeight,wide=w>=700&&w>hh*1.4;document.body.classList.toggle('wide',wide);document.body.style.zoom=wide?String(Math.max(1,Math.min(2.4,w/1000))):'1'}
+addEventListener('resize',fit);addEventListener('orientationchange',fit);
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),4000)}
+function tvSheet(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent||'');const d=document.createElement('div');d.className='sheet';d.onclick=e=>{if(e.target===d)d.remove()};
+d.innerHTML=`<div><h2>📺 הצגה בטלוויזיה</h2><ol style="padding-inline-start:20px;margin:0 0 14px"><li>${ios?'פתחו את מרכז הבקרה (החליקו מהפינה העליונה) ← <b>שיקוף מסך</b> ← בחרו את הטלוויזיה (AirPlay).':'החליקו מהקצה העליון של המסך ← <b>Smart View / Cast / שידור מסך</b> ← בחרו את הטלוויזיה.'}</li><li>לחצו כאן על <b>מצב טלוויזיה</b> וסובבו את הטלפון לרוחב, כדי שהמשחק ימלא את כל מסך הטלוויזיה.</li><li>ממשיכים לשחק מהטלפון, וכולם רואים את הציר. זה חלק מהמשחק.</li></ol><button class="big" style="margin-top:0" onclick="tvMode(this)">מצב טלוויזיה</button><button class="soft" style="width:100%;margin-top:8px;padding:12px" onclick="this.closest('.sheet').remove()">סגירה</button></div>`;document.body.appendChild(d)}
+function tvMode(b){try{const e=document.documentElement;e.requestFullscreen&&e.requestFullscreen({navigationUI:'hide'}).catch(()=>{})}catch(x){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})}catch(x){}b.closest('.sheet').remove();toast('סובבו את הטלפון לרוחב כדי למלא את המסך')}
+/* ---------- bonuses, stats ---------- */
+function yearBonus(s){const [a,b]=G.nb;const d=a>-Infinity&&b<Infinity?Math.round((a+b)/2):(a>-Infinity?a:b);G.yg=d;scrollTo(0,0);sfx('ok');vib(25);
+$('#app').innerHTML=`<div class="center"><div class="res ok">✓ צדקת!</div><p class="sub"><b>בונוס שנה:</b> באיזו שנה יצא השיר?<br>פער של עד שנתיים = ⭐ · בול = ⭐⭐ · שלושה כוכבים = 🛡️</p></div><div class="card center"><div class="ry" id="yg" style="margin:0;font-size:60px">${d}</div><div class="row" style="justify-content:center;margin-top:10px">${[-5,-1,1,5].map(k=>`<button class="soft" style="flex:none;min-width:68px;font-size:18px" onclick="yAdj(${k})">${k>0?'+':'−'}${Math.abs(k)}</button>`).join('')}</div></div><div class="dock"><button class="big" onclick="yAns()">אישור שנה</button><button class="soft" style="width:100%;margin-top:8px;padding:12px" onclick="bonus(G.song)">דלגו</button></div>`}
+function yAdj(k){G.yg=Math.max(1940,Math.min(2030,G.yg+k));$('#yg').textContent=G.yg;vib(8)}
+function yAns(){const s=G.song,p=G.players[G.cur],d=Math.abs(G.yg-s.y),pts=d==0?2:d<=2?1:0;p.st=(p.st||0)+pts;let sh=0;while(p.st>=3){p.st-=3;p.sh=(p.sh||0)+1;sh++}G.ym={g:G.yg,pts,sh};bonus(s)}
+function saveStats(){try{const s=JSON.parse(localStorage.getItem('tzir_stats')||'{}');s.g=(s.g||0)+1;G.players.forEach(q=>{s.h=(s.h||0)+(q.hit||0);s.t=(s.t||0)+(q.tot||0)});localStorage.setItem('tzir_stats',JSON.stringify(s))}catch(e){}}
+function statsLine(){try{const s=JSON.parse(localStorage.getItem('tzir_stats')||'{}');return s.g?`<p class="note">${s.g} משחקים · דיוק כולל ${Math.round(100*s.h/Math.max(1,s.t))}%</p>`:''}catch(e){return''}}
 /* ---------- game state ---------- */
-let G={cnt:2,target:10,pack:"intl",names:["","","",""]};
+let G={cnt:2,target:10,pack:"intl",genre:"all",bon:true,names:["","","",""]};
 function start(){
-  const seen=ls.get();let pool=PK[G.pack].filter(x=>!seen.includes(x.id)&&!NA.has(x.id));if(pool.length<G.cnt*(G.target+2)){ls.set(seen.filter(id=>!PK[G.pack].some(x=>x.id===id)));pool=PK[G.pack].filter(x=>!NA.has(x.id))}const deck=shuffle(pool);
+  const seen=ls.get();const base=pk();let pool=base.filter(x=>!seen.includes(x.id)&&!NA.has(x.id));if(pool.length<G.cnt*(G.target+2)){ls.set(seen.filter(id=>!base.some(x=>x.id===id)));pool=base.filter(x=>!NA.has(x.id))}const deck=shuffle(pool);
   G.players=Array.from({length:G.cnt},(_,i)=>({n:G.names[i].trim()||'שחקן '+(i+1),tl:[deck.pop()],sh:0,sw:0,tot:0,hit:0}));
   G.chain=0;G.deck=deck;G.players.forEach(p=>markSeen(p.tl[0].id));G.cur=0;G.slot=null;G.song=null;keepAwake();
   G.cnt===1?turn():pass();
@@ -682,24 +738,24 @@ function pass(){
 function quit(){if(G.qa){G.qa=0;home()}else{G.qa=1;const x=$('.x');if(x)x.textContent='לצאת? לחצו שוב';setTimeout(()=>{G.qa=0;const y=$('.x');if(y)y.textContent='✕ יציאה'},2500)}}
 function lab(i,p){const t=p.tl;return i==0?'לפני '+t[0].y:i==t.length?'אחרי '+t[t.length-1].y:'בין '+t[i-1].y+' ל־'+t[i].y}
 function turn(fresh=true){
-  if(fresh||!G.song){let n=0;do{if(!G.deck.length)G.deck=shuffle(PK[G.pack]);G.song=G.deck.pop()}while(NA.has(G.song.id)&&++n<30);G.slot=null;const sg=G.song;preview(sg).then(()=>{if(NA.has(sg.id)&&G.song===sg&&G.slot===null&&$('.disc')&&(G.chain=(G.chain||0)+1)<6)turn(true)})}
+  if(fresh||!G.song){let n=0;do{if(!G.deck.length)G.deck=shuffle(pk());G.song=G.deck.pop()}while(NA.has(G.song.id)&&++n<30);G.slot=null;const sg=G.song;preview(sg).then(()=>{if(NA.has(sg.id)&&G.song===sg&&G.slot===null&&$('.disc')&&(G.chain=(G.chain||0)+1)<6)turn(true)})}
   const p=G.players[G.cur];scrollTo(0,0);
   let tl='';for(let i=0;i<=p.tl.length;i++){tl+=`<button class="slot ${G.slot===i?'sel':''}" id="s${i}" onclick="pick(${i})">＋ ${lab(i,p)}</button>`;if(i<p.tl.length)tl+=songRow(p.tl[i]);}
-  $('#app').innerHTML=`<div style="--c:${COLS[G.cur]}"><div class="top"><button class="x" onclick="quit()">✕ יציאה</button><div class="who"><i class="dot" style="background:${COLS[G.cur]}"></i>${p.n}</div><div class="cnt">${p.sh?'🛡️'.repeat(p.sh)+' ':''}${p.tl.length}/${G.target}</div></div><div class="goal"><i style="width:${Math.min(100,p.tl.length/G.target*100)}%"></i></div></div>
+  $('#app').innerHTML=`<div class="tv-grid"><div class="tv-l"><div style="--c:${COLS[G.cur]}"><div class="top"><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="x" onclick="quit()">✕ יציאה</button><button class="x tvb" aria-label="הצגה בטלוויזיה" onclick="tvSheet()">📺</button></div><div class="who"><i class="dot" style="background:${COLS[G.cur]}"></i>${p.n}</div><div class="cnt">${p.st?'⭐'.repeat(p.st)+' ':''}${p.sh?'🛡️'.repeat(p.sh)+' ':''}${p.tl.length}/${G.target}</div></div><div class="goal"><i style="width:${Math.min(100,p.tl.length/G.target*100)}%"></i></div></div>
   <div class="card player"><button class="disc" aria-label="נגן את השיר" onclick="playSong(G.song)">▶</button><div class="prog"><i></i></div><div id="tm">0:00 / 0:30</div>
   <div class="row" style="margin-top:10px"><button class="soft" onclick="playSong(G.song)">↻ שמעו שוב</button><button class="soft" onclick="turn(true)">לא מתנגן? שיר אחר</button><button class="soft" style="flex-basis:100%" ${p.sw?'disabled':''} onclick="swap()">לא מכירים? החלפה (פעם אחת)</button></div>
   <p class="note" style="margin:8px 0 0"><span class="mock" id="mock" style="display:none">השמע האמיתי לא זמין כאן, מתנגנת מנגינה בדויה</span></p></div>
-  <h2 style="margin-top:18px">איפה השיר על הציר?</h2><div class="tl">${tl}</div>
-  <div class="dock"><button class="big" id="ok" ${G.slot===null?'disabled':''} onclick="confirmPlace()">אישור</button></div>`;
+  </div><div class="tv-r"><h2 style="margin-top:18px">איפה השיר על הציר?</h2><div class="tl">${tl}</div>
+  <div class="dock"><button class="big" id="ok" ${G.slot===null?'disabled':''} onclick="confirmPlace()">אישור</button></div></div></div>`;
 }
 function pick(i){G.slot=i;document.querySelectorAll('.slot').forEach(e=>e.classList.remove('sel'));const e=$('#s'+i);if(e)e.classList.add('sel');const b=$('#ok');if(b)b.disabled=false;vib(12)}
 function confirmPlace(){
-  let i=G.slot;stopAudio();const p=G.players[G.cur],s=G.song;markSeen(s.id);
+  let i=G.slot;stopAudio();G.ym=null;const p=G.players[G.cur],s=G.song;markSeen(s.id);
   const prev=i>0?p.tl[i-1].y:-Infinity,next=i<p.tl.length?p.tl[i].y:Infinity;
   let ok=prev<=s.y&&s.y<=next,saved=false;
   if(!ok&&(p.sh||0)>0){p.sh--;saved=true;ok=true;i=p.tl.filter(x=>x.y<=s.y).length}
   if(ok)p.tl.splice(i,0,s);
-  if(ok&&!saved)return bonus(s);
+  G.nb=[prev,next];if(ok&&!saved)return G.bon?yearBonus(s):res(true,false,null);
   res(ok,saved,null);
 }
 function res(ok,saved,bn){
@@ -707,7 +763,7 @@ function res(ok,saved,bn){
   p.tot=(p.tot||0)+1;if(ok&&!saved)p.hit=(p.hit||0)+1;
   sfx(win?'win':ok?'ok':'bad');vib(ok?[30,40,30]:[140]);if(ok)confetti(win?90:26);
   $('#app').innerHTML=`<div class="center"><div class="res ${ok?'ok':'bad'}">${saved?'🛡️ כמעט!':ok?'✓ צדקת!':'✗ לא הפעם'}</div>
-  <p class="sub">${saved?'המגן הציל אותך, השיר ממוקם במקום הנכון':ok?'השיר נשאר על הציר שלך':'השיר יצא מהמשחק'}</p>${bn===true?'<p class="sub">🛡️ הבונוס נכון, קיבלת מגן מטעות עתידית</p>':bn===false?'<p class="sub">הבונוס לא הצליח הפעם</p>':''}</div>
+  <p class="sub">${saved?'המגן הציל אותך, השיר ממוקם במקום הנכון':ok?'השיר נשאר על הציר שלך':'השיר יצא מהמשחק'}</p>${bn===true?'<p class="sub">🛡️ הבונוס נכון, קיבלת מגן מטעות עתידית</p>':bn===false?'<p class="sub">הבונוס לא הצליח הפעם</p>':''}${G.ym?`<p class="sub">📅 ניחשתם ${G.ym.g}: ${G.ym.pts?'⭐'.repeat(G.ym.pts):'הפעם בלי כוכב'}${G.ym.sh?' · 🛡️ קיבלתם מגן!':''}</p>`:''}</div>
   <div class="rev ${ok?'':'miss'}">${art(s)}<div class="meta"><b>${s.t}</b><small>${s.a}</small></div><div class="ry" id="ry">${s.y}</div></div>
   ${ok?`<h2 style="margin-top:18px">הציר שלך</h2><div class="tl">${p.tl.map(x=>songRow(x,x===s?'new':'')).join('')}</div>`:''}
   <div class="dock"><button class="big" onclick="${win?'finish()':'next()'}">${win?'לסיום 🏆':G.players.length>1?'התור הבא':'שיר הבא'}</button></div>`;
@@ -724,26 +780,155 @@ function next(){G.chain=0;G.cur=(G.cur+1)%G.players.length;G.players.length>1?pa
 function finish(){
   const p=G.players[G.cur],ys=p.tl.map(x=>x.y),acc=p.tot?Math.round(100*(p.hit||0)/p.tot):0;
   const sb=[...G.players].sort((a,b)=>b.tl.length-a.tl.length);scrollTo(0,0);
-  $('#app').innerHTML=`<div class="center" style="--c:${COLS[G.cur]}"><div class="trophy">🏆</div><p class="sub">${G.players.length>1?'המנצח/ת':'הגעתם ליעד'}</p><div class="name" style="margin-top:4px">${p.n}</div>
+  $('#app').innerHTML=`<i class="fin"></i><div class="center" style="--c:${COLS[G.cur]}"><div class="trophy">🏆</div><p class="sub">${G.players.length>1?'המנצח/ת':'הגעתם ליעד'}</p><div class="name" style="margin-top:4px">${p.n}</div>
   <p class="sub">${p.tl.length} שירים, מ־${Math.min(...ys)} עד ${Math.max(...ys)} · דיוק ${acc}%</p></div>
   ${G.players.length>1?`<div class="card">${sb.map(q=>`<div class="sb"><i class="dot" style="background:${COLS[G.players.indexOf(q)]}"></i>${q.n}<b>${q.tl.length}</b></div>`).join('')}</div>`:''}
   <h2 style="margin-top:18px">הציר המלא</h2><div class="tl">${p.tl.map(x=>songRow(x)).join('')}</div>
   <div class="dock"><button class="big" onclick="start()">שחקו שוב</button><button class="soft" style="width:100%;margin-top:8px;padding:12px" onclick="home()">למסך הבית</button></div>`;
-  sfx('win');vib([40,60,40,60,120]);confetti(120);
+  saveStats();sfx('win');vib([40,60,40,60,120]);confetti(120);
 }
 function home(){
   stopAudio();scrollTo(0,0);
   const pk=[['intl','🌍','בינלאומית',PK.intl.length],['isr','🇮🇱','ישראלית',PK.isr.length],['mix','🎶','מעורב',PK.mix.length]];
-  $('#app').innerHTML=`<div class="hero"><div class="logo"></div><h1>ציר</h1><p class="sub">שומעים, מנחשים שנה, בונים ציר זמן מוזיקלי</p></div>
-  <div class="card"><h2>חבילת שירים</h2><div class="row">${pk.map(([k,e,n,c])=>`<button class="pack ${G.pack==k?'on':''}" onclick="G.pack='${k}';home()"><span>${e}</span>${n}<small>${c} שירים</small></button>`).join('')}</div></div>
+  $('#app').innerHTML=`<div class="hero"><div class="logo"></div><h1>ניחושיר</h1><p class="sub">שומעים, מנחשים שנה, בונים ציר זמן מוזיקלי</p></div>
+  <div class="card"><h2>חבילת שירים</h2><div class="row">${pk.map(([k,e,n,c])=>`<button class="pack ${G.pack==k?'on':''}" onclick="G.pack='${k}';G.genre='all';home()"><span>${e}</span>${n}<small>${c} שירים</small></button>`).join('')}</div>${chipsHtml()}</div>
   <div class="card"><h2>שחקנים</h2><div class="row" style="margin-bottom:12px">${[1,2,3,4].map(n=>`<button class="pack ${G.cnt==n?'on':''}" onclick="G.cnt=${n};home()">${n}</button>`).join('')}</div>
   ${Array.from({length:G.cnt},(_,i)=>`<div class="prow"><i class="dot" style="background:${COLS[i]}"></i><input id="n${i}" placeholder="שחקן ${i+1}" value="${G.names[i]}" maxlength="14" oninput="G.names[${i}]=this.value"></div>`).join('')}</div>
   <div class="card"><h2>יעד לניצחון</h2><div class="row">${[7,10,15].map(n=>`<button class="pack ${G.target==n?'on':''}" onclick="G.target=${n};home()">${n} שירים</button>`).join('')}</div></div>
-  ${instCard()}<div class="row" style="margin-top:14px;align-items:center"><button onclick="beep()">🔊 בדיקת שמע</button><span id="snd" class="sub" style="margin:0"></span></div>
+  <div class="card"><h2>בונוסים</h2><div class="row"><button class="pack ${G.bon?'on':''}" onclick="G.bon=true;home()">פעילים<small>שנה מדויקת + שיר ומבצע</small></button><button class="pack ${G.bon?'':'on'}" onclick="G.bon=false;home()">כבויים<small>משחק מהיר</small></button></div></div>${instCard()}<div class="row" style="margin-top:14px;align-items:center"><button onclick="beep()">🔊 בדיקת שמע</button><button onclick="tvSheet()">📺 הצגה בטלוויזיה</button><span id="snd" class="sub" style="width:100%;margin:0"></span></div>
+  <button class="soft" style="width:100%;margin-top:12px;padding:12px" onclick="mpMenu()">📡 מצב נוסף: משחק בכמה מכשירים</button>
   <div class="dock"><button class="big" onclick="start()">יוצאים לדרך</button></div>
-  <p class="note">שירים ששוחקו לא חוזרים בערבים הבאים. <a href="#" onclick="ls.set([]);NA.clear();saveNA();home();return false" style="color:var(--acc)">איפוס</a></p>`;
+  ${statsLine()}<p class="note">שירים ששוחקו לא חוזרים בערבים הבאים. <a href="#" onclick="ls.set([]);NA.clear();saveNA();home();return false" style="color:var(--acc)">איפוס</a></p>`;
 }
-home();
+/* ---------- multi-device mode ---------- */
+const MPAUD=new Audio();
+const MP={host:false,code:'',peer:null,conn:null,conns:{},me:'',S:null,H:{},o:{play:true,name:'',audioAt:'host'},clip:null,yg:2000,ph:'',cu:-1};
+const PKL={intl:'בינלאומית',isr:'ישראלית',mix:'מעורב'};
+const slim=s=>({id:s.id,t:s.t,a:s.a,y:s.y});
+const loadPeer=()=>window.Peer?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no(new Error('load'));document.head.appendChild(s)});
+function mpUnlock(){try{MPAUD.src='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=';MPAUD.play().catch(()=>{});ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}}
+async function playUrl(u,id){stopAudio();++tok;const tag=$('#mock');if(u){try{au=MPAUD;au.src=u;await au.play();if(tag)tag.style.display='none';const d=$('.disc');if(d)d.classList.add('spin');t0=performance.now();prog30();au.onended=stopAudio;return}catch(e){au=null}}if(tag)tag.style.display='';playMock({id})}
+function mpErr(t){$('#app').innerHTML=`<div class="center" style="padding-top:40px"><div class="res bad" style="font-size:24px">${t}</div><button class="big" onclick="mpLeave()">חזרה</button></div>`}
+function mpLeave(){try{MP.peer&&MP.peer.destroy()}catch(e){}stopAudio();Object.assign(MP,{host:false,peer:null,conn:null,conns:{},S:null,H:{},clip:null,me:'',code:'',ph:'',cu:-1});home()}
+function mpQuit(){if(MP.qa){MP.qa=0;mpLeave()}else{MP.qa=1;toast('לחצו שוב כדי לצאת');setTimeout(()=>MP.qa=0,2500)}}
+function mpMenu(){scrollTo(0,0);$('#app').innerHTML=`<div class="center"><h2 style="font-size:26px">📡 משחק בכמה מכשירים</h2><p class="sub">מארח אחד מציג מסך משותף לכולם, וכל שחקן מצטרף מהטלפון שלו עם קוד ורואה את הציר שלו.</p></div>
+<div class="card"><button class="big" style="margin-top:0" onclick="mpHostStart()">🖥️ פתיחת חדר (אני המארח)</button><p class="note" style="margin:10px 0 0">החבילה, הסגנון, היעד והבונוסים נלקחים ממסך הפתיחה.</p></div>
+<div class="card"><h2>הצטרפות לחדר</h2><input id="mc" placeholder="קוד חדר" maxlength="4" style="text-transform:uppercase;direction:ltr;text-align:center;font-size:24px"><input id="mn" placeholder="השם שלך" maxlength="14" style="margin-top:8px" value="${G.names[0]||''}"><button class="big" onclick="mpJoin($('#mc').value,$('#mn').value)">הצטרפות</button></div>
+<button class="soft" style="width:100%;margin-top:14px;padding:12px" onclick="home()">חזרה למשחק הרגיל</button>`}
+async function mpHostStart(){$('#app').innerHTML='<p class="center sub" style="padding-top:60px">מתחברים...</p>';
+ try{await loadPeer()}catch(e){return mpErr('לא הצלחנו לטעון את שירות החיבור. בדקו אינטרנט.')}
+ MP.host=true;MP.me='host';
+ const go=()=>{MP.code=Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random()*32|0]).join('');const p=new Peer('tzirgame-'+MP.code);MP.peer=p;
+  p.on('open',()=>{MP.S={phase:'lobby',players:[],cur:0,target:G.target,bon:G.bon,audioAt:MP.o.audioAt,slot:null};mpSyncHost();bcast()});
+  p.on('connection',c=>{c.on('data',m=>hostMsg(c.peer,m,c));c.on('close',()=>hostDrop(c.peer))});
+  p.on('error',e=>{if(e.type==='unavailable-id')go();else mpErr('שגיאת חיבור: '+e.type)})};go()}
+function mpSyncHost(){const S=MP.S,i=S.players.findIndex(p=>p.id==='host');if(MP.o.play&&i<0)S.players.unshift({id:'host',n:MP.o.name||'מארח',tl:[],sh:0,st:0,sw:0,tot:0,hit:0,on:true});else if(!MP.o.play&&i>=0)S.players.splice(i,1);else if(i>=0)S.players[i].n=MP.o.name||'מארח'}
+function mpOpt(k,v){MP.o[k]=v;if(k==='audioAt')MP.S.audioAt=v;mpSyncHost();bcast()}
+function mpShare(){const u=location.origin+location.pathname+'?room='+MP.code;if(navigator.share)navigator.share({title:'ניחושיר',text:'הצטרפו למשחק, קוד '+MP.code,url:u}).catch(()=>{});else{try{navigator.clipboard.writeText(u);toast('הקישור הועתק')}catch(e){toast(u)}}}
+function hostDrop(id){const S=MP.S;if(!S)return;const i=S.players.findIndex(p=>p.id===id);if(i<0)return;if(S.phase==='lobby')S.players.splice(i,1);else S.players[i].on=false;delete MP.conns[id];bcast()}
+function mpSend(m){Object.values(MP.conns).forEach(c=>{try{c.open&&c.send(m)}catch(e){}})}
+function bcast(){mpSend({t:'S',S:MP.S});mpRender()}
+function hostMsg(from,m,c){const S=MP.S,H=MP.H;if(!S)return;
+ if(m.t==='join'){let n=String(m.n||'שחקן').trim().slice(0,14)||'שחקן';const ex=S.players.find(p=>p.id!=='host'&&p.n===n&&p.on===false);
+  if(ex){ex.id=from;ex.on=true}else if(S.phase==='lobby'){let k=n,i=2;while(S.players.some(p=>p.n===k))k=n+' '+i++;S.players.push({id:from,n:k,tl:[],sh:0,st:0,sw:0,tot:0,hit:0,on:true})}else{c&&c.send({t:'full'});return}
+  if(c)MP.conns[from]=c;bcast();return}
+ const cur=S.players[S.cur];
+ if(m.t==='next'){if(cur&&(from==='host'||cur.id===from))mpNext();return}
+ if(S.phase==='lobby'||!cur||cur.id!==from)return;
+ if(m.t==='play'){if(from!=='host'&&S.phase==='turn')preview(H.song).then(p=>playUrl(p&&p.u,H.song.id))}
+ else if(m.t==='slot'&&S.phase==='turn'){S.slot=m.i;mpSend({t:'slot',i:m.i});mpSlotUI()}
+ else if(m.t==='skip'&&S.phase==='turn'){nextSong();bcast()}
+ else if(m.t==='swap'&&S.phase==='turn'&&!cur.sw){cur.sw=1;nextSong();bcast()}
+ else if(m.t==='confirm'&&S.phase==='turn'&&m.i!=null)mpConfirm(m.i);
+ else if(m.t==='yr'&&S.phase==='bonusY')mpYear(m.g);
+ else if(m.t==='ysk'&&S.phase==='bonusY')mpOpts();
+ else if(m.t==='ans'&&S.phase==='bonusS')mpAnswer(m.id)}
+function mpStartGame(){mpUnlock();const S=MP.S,H=MP.H;mpSyncHost();const seen=ls.get(),base=pk();let pool=base.filter(x=>!seen.includes(x.id)&&!NA.has(x.id));
+ if(pool.length<S.players.length*(G.target+2)){ls.set(seen.filter(id=>!base.some(x=>x.id===id)));pool=base.filter(x=>!NA.has(x.id))}
+ H.deck=shuffle(pool);H.ch=0;S.target=G.target;S.bon=G.bon;S.audioAt=MP.o.audioAt;S.win=false;
+ S.players.forEach(p=>{p.tl=[slim(H.deck.pop())];markSeen(p.tl[0].id);p.sh=0;p.st=0;p.sw=0;p.tot=0;p.hit=0});
+ S.cur=0;S.phase='turn';nextSong();bcast();keepAwake()}
+function nextSong(){const S=MP.S,H=MP.H;let n=0;do{if(!H.deck.length)H.deck=shuffle(pk());H.song=H.deck.pop()}while(NA.has(H.song.id)&&++n<30);S.slot=null;S.opts=null;S.nb=null;S.reveal=null;const sg=H.song;
+ preview(sg).then(p=>{if(NA.has(sg.id)&&H.song===sg&&S.phase==='turn'&&(H.ch=(H.ch||0)+1)<6){nextSong();bcast();return}
+  if(S.audioAt==='turn'&&H.song===sg){const a=S.players[S.cur],c=a&&MP.conns[a.id];if(c)c.send({t:'clip',u:p?p.u:null,id:sg.id})}})}
+function mpConfirm(i){const S=MP.S,H=MP.H,p=S.players[S.cur],s=H.song;stopAudio();markSeen(s.id);
+ const prev=i>0?p.tl[i-1].y:-Infinity,next=i<p.tl.length?p.tl[i].y:Infinity;
+ let ok=prev<=s.y&&s.y<=next,saved=false;
+ if(!ok&&p.sh>0){p.sh--;saved=true;ok=true;i=p.tl.filter(x=>x.y<=s.y).length}
+ H.r={ok,saved,bn:null,ym:null,pos:i};
+ if(ok&&!saved&&S.bon){S.phase='bonusY';S.nb=[prev===-Infinity?null:prev,next===Infinity?null:next];bcast()}else mpReveal()}
+function mpYear(g){const S=MP.S,H=MP.H,p=S.players[S.cur],d=Math.abs(g-H.song.y),pts=d==0?2:d<=2?1:0;p.st=(p.st||0)+pts;let sh=0;while(p.st>=3){p.st-=3;p.sh++;sh++}H.r.ym={g,pts,sh};mpOpts()}
+function mpOpts(){const S=MP.S,s=MP.H.song,pool=PK[G.pack].filter(x=>x.a!==s.a);S.opts=shuffle([s,...shuffle(pool).slice(0,3)]).map(x=>({id:x.id,t:x.t,a:x.a}));S.phase='bonusS';bcast()}
+function mpAnswer(id){const S=MP.S,H=MP.H,p=S.players[S.cur];H.r.bn=id===-1?null:id===H.song.id;if(H.r.bn)p.sh++;mpReveal()}
+function mpReveal(){const S=MP.S,H=MP.H,p=S.players[S.cur],r=H.r;if(r.ok)p.tl.splice(r.pos,0,slim(H.song));p.tot++;if(r.ok&&!r.saved)p.hit++;S.reveal={song:slim(H.song),ok:r.ok,saved:r.saved,bn:r.bn,ym:r.ym};S.win=r.ok&&p.tl.length>=S.target;S.phase='reveal';bcast()}
+function mpNext(){const S=MP.S,H=MP.H;if(S.phase==='reveal'&&S.win){S.phase='end';return bcast()}
+ if(S.phase!=='reveal'&&S.phase!=='turn')return;H.ch=0;S.cur=(S.cur+1)%S.players.length;S.phase='turn';nextSong();bcast()}
+function mpAgain(){const S=MP.S;S.players.forEach(p=>{p.tl=[];p.sh=0;p.st=0;p.sw=0;p.tot=0;p.hit=0});S.phase='lobby';S.win=false;bcast()}
+/* client */
+async function mpJoin(code,name){code=(code||'').trim().toUpperCase();name=(name||'').trim();if(code.length<4||!name)return toast('נא למלא קוד ושם');G.names[0]=name;
+ $('#app').innerHTML='<p class="center sub" style="padding-top:60px">מתחברים...</p>';
+ try{await loadPeer()}catch(e){return mpErr('לא הצלחנו לטעון את שירות החיבור. בדקו אינטרנט.')}
+ MP.host=false;const p=new Peer();MP.peer=p;
+ p.on('open',id=>{MP.me=id;const c=p.connect('tzirgame-'+code,{reliable:true});MP.conn=c;
+  c.on('open',()=>{c.send({t:'join',n:name});MP.code=code;keepAwake()});
+  c.on('data',clientMsg);c.on('close',()=>mpErr('החיבור למארח נותק'));
+  setTimeout(()=>{if(!MP.S)mpErr('לא הצלחנו להתחבר. בדקו את הקוד והרשת')},9000)});
+ p.on('error',e=>mpErr(e.type==='peer-unavailable'?'לא נמצא חדר עם הקוד הזה':'שגיאת חיבור: '+e.type))}
+function clientMsg(m){if(m.t==='S'){MP.S=m.S;mpRender()}else if(m.t==='slot'){MP.S.slot=m.i;mpSlotUI()}else if(m.t==='clip')MP.clip=m;else if(m.t==='full')mpErr('המשחק כבר התחיל')}
+function mpAct(t,d){d=Object.assign({t},d||{});if(MP.host)hostMsg('host',d,null);else if(MP.conn)MP.conn.send(d)}
+/* actions from the UI */
+function mpPick(i){MP.S.slot=i;mpSlotUI();mpAct('slot',{i});vib(12)}
+function mpSlotUI(){const S=MP.S;document.querySelectorAll('.slot').forEach(e=>e.classList.remove('sel'));const e=$('#s'+S.slot);if(e)e.classList.add('sel');const b=$('#ok');if(b)b.disabled=S.slot==null}
+function mpConfirmUI(){if(MP.S.slot!=null)mpAct('confirm',{i:MP.S.slot})}
+function mpPlay(){const S=MP.S;if(MP.host){const sg=MP.H.song;preview(sg).then(p=>playUrl(p&&p.u,sg.id));return}
+ if(S.audioAt==='turn'){const c=MP.clip;if(!c)return toast('השיר נטען, נסו שוב');playUrl(c.u,c.id)}else{mpAct('play');toast('השיר מתנגן במסך המשותף')}}
+function mpYAdj(k){MP.yg=Math.max(1940,Math.min(2030,MP.yg+k));$('#yg').textContent=MP.yg;vib(8)}
+/* views */
+const plOf=()=>MP.S.players.find(p=>p.id===MP.me);
+function scoreHtml(){const S=MP.S;return `<div class="chipsc">${S.players.map((p,i)=>`<span class="pl ${i==S.cur&&S.phase!=='lobby'?'cur':''} ${p.on===false?'off':''}"><i class="dot" style="background:${COLS[i%4]}"></i>${p.n}${S.phase==='lobby'?'':' · '+p.tl.length+'/'+S.target}${p.st?' '+'⭐'.repeat(p.st):''}${p.sh?' '+'🛡️'.repeat(p.sh):''}</span>`).join('')||'<span class="sub">עדיין אין שחקנים</span>'}</div>`}
+function tlHtml(p,mode){let t='';for(let i=0;i<=p.tl.length;i++){if(mode)t+=`<button class="slot ${MP.S.slot===i?'sel':''}" id="s${i}" ${mode==2?`onclick="mpPick(${i})"`:'disabled'}>＋ ${lab(i,p)}</button>`;if(i<p.tl.length)t+=songRow(p.tl[i])}return t}
+const ctrlCard=cur=>`<div class="card player"><button class="disc" aria-label="נגן את השיר" onclick="mpPlay()">▶</button><div class="prog"><i></i></div><div id="tm">0:00 / 0:30</div><div class="row" style="margin-top:10px"><button class="soft" onclick="mpPlay()">↻ שמעו שוב</button><button class="soft" onclick="mpAct('skip')">לא מתנגן? שיר אחר</button><button class="soft" style="flex-basis:100%" ${cur.sw?'disabled':''} onclick="mpAct('swap')">לא מכירים? החלפה (פעם אחת)</button></div><p class="note" style="margin:8px 0 0"><span class="mock" id="mock" style="display:none">מתנגנת מנגינה בדויה</span></p></div>`;
+const discCard=cur=>`<div class="card player"><div class="disc">▶</div><div class="prog"><i></i></div><div id="tm">0:00 / 0:30</div><p class="note" style="margin:8px 0 0">${MP.S.audioAt==='host'?'השמע מתנגן כאן כשהשחקן לוחץ':'השמע מתנגן אצל '+cur.n}<span class="mock" id="mock" style="display:none"> · מנגינה בדויה</span></p></div>`;
+const dockBtn=(label,fn,dis)=>`<div class="dock"><button class="big" id="ok" ${dis||''} onclick="${fn}">${label}</button></div>`;
+const yearUI=()=>`<div class="center"><div class="res ok">✓ צדקת!</div><p class="sub"><b>בונוס שנה:</b> באיזו שנה יצא השיר?<br>פער של עד שנתיים = ⭐ · בול = ⭐⭐ · שלושה כוכבים = 🛡️</p></div><div class="card center"><div class="ry" id="yg" style="margin:0;font-size:60px">${MP.yg}</div><div class="row" style="justify-content:center;margin-top:10px">${[-5,-1,1,5].map(k=>`<button class="soft" style="flex:none;min-width:68px;font-size:18px" onclick="mpYAdj(${k})">${k>0?'+':'−'}${Math.abs(k)}</button>`).join('')}</div></div><div class="dock"><button class="big" onclick="mpAct('yr',{g:MP.yg})">אישור שנה</button><button class="soft" style="width:100%;margin-top:8px;padding:12px" onclick="mpAct('ysk')">דלגו</button></div>`;
+const optsUI=()=>`<div class="center"><div class="res ok">✓ צדקת!</div><p class="sub"><b>בונוס שיר:</b> מה השיר ומי המבצע?</p></div>${MP.S.opts.map(o=>`<button class="opt" onclick="mpAct('ans',{id:${o.id}})"><b>${o.t}</b><small>${o.a}</small></button>`).join('')}<button class="soft" style="width:100%;margin-top:14px;padding:12px" onclick="mpAct('ans',{id:-1})">דלגו על הבונוס</button>`;
+function revHtml(){const r=MP.S.reveal,s=r.song;return `<div class="center"><div class="res ${r.ok?'ok':'bad'}">${r.saved?'🛡️ כמעט!':r.ok?'✓ צדקת!':'✗ לא הפעם'}</div><p class="sub">${r.saved?'המגן הציל אותך':r.ok?'השיר נשאר על הציר':'השיר יצא מהמשחק'}</p>${r.bn===true?'<p class="sub">🛡️ בונוס שיר נכון</p>':r.bn===false?'<p class="sub">הבונוס לא הצליח</p>':''}${r.ym?`<p class="sub">📅 ניחוש ${r.ym.g}: ${r.ym.pts?'⭐'.repeat(r.ym.pts):'בלי כוכב'}${r.ym.sh?' · 🛡️ מגן!':''}</p>`:''}</div><div class="rev ${r.ok?'':'miss'}">${art(s)}<div class="meta"><b>${s.t}</b><small>${s.a}</small></div><div class="ry" id="ry">${s.y}</div></div>`}
+const nextBtn=()=>`<div class="dock"><button class="big" onclick="mpAct('next')">${MP.S.win?'לסיום 🏆':'התור הבא'}</button></div>`;
+const waitTxt=(cur,t)=>`<div class="center"><div class="res" style="font-size:26px">${cur.n} ${t}</div><p class="sub">ממתינים...</p></div>`;
+function topBar(p,i){const S=MP.S,c=COLS[i%4];return `<div style="--c:${c}"><div class="top"><button class="x" onclick="mpQuit()">✕ יציאה</button><div class="who"><i class="dot" style="background:${c}"></i>${p.n}${p.on===false?' (מנותק)':''}</div><div class="cnt">${p.tl.length}/${S.target}</div></div><div class="goal"><i style="width:${Math.min(100,p.tl.length/S.target*100)}%"></i></div></div>`}
+function lobbyHost(){const S=MP.S,url=location.origin+location.pathname+'?room='+MP.code;
+ return `<div class="center"><p class="sub">קוד החדר</p><div class="code">${MP.code}</div><p class="sub" style="font-size:12px;direction:ltr;word-break:break-all">${url}</p><img alt="" width="150" height="150" style="border-radius:12px;margin-top:8px;background:#fff;padding:6px" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}" onerror="this.remove()"><div class="row" style="justify-content:center;margin-top:10px"><button class="soft" style="flex:none" onclick="mpShare()">שיתוף קישור</button></div></div>
+ <div class="card"><h2>שחקנים בחדר</h2>${scoreHtml()}</div>
+ <div class="card"><h2>הגדרות</h2><p class="sub" style="margin:0 0 10px">חבילה: ${PKL[G.pack]}${G.genre!='all'?' · '+GL[G.genre]:''} · יעד ${G.target} שירים · בונוסים ${G.bon?'פעילים':'כבויים'}</p>
+ <div class="row"><button class="pack ${MP.o.play?'on':''}" onclick="mpOpt('play',true)">אני משתתף<small>המארח משחק גם</small></button><button class="pack ${MP.o.play?'':'on'}" onclick="mpOpt('play',false)">רק מסך<small>מארח בלי לשחק</small></button></div>
+ <div class="row" style="margin-top:8px"><button class="pack ${MP.o.audioAt=='host'?'on':''}" onclick="mpOpt('audioAt','host')">שמע במסך המשותף</button><button class="pack ${MP.o.audioAt=='turn'?'on':''}" onclick="mpOpt('audioAt','turn')">שמע אצל השחקן בתור</button></div>
+ <input id="hn" placeholder="השם שלך (מארח)" maxlength="14" value="${MP.o.name}" oninput="MP.o.name=this.value" style="margin-top:10px;${MP.o.play?'':'display:none'}"></div>
+ <div class="dock"><button class="big" ${S.players.length?'':'disabled'} onclick="mpStartGame()">התחילו משחק</button><button class="soft" style="width:100%;margin-top:8px;padding:12px" onclick="mpLeave()">ביטול</button></div>`}
+const lobbyClient=()=>`<div class="center" style="padding-top:20px"><p class="sub">חדר</p><div class="code">${MP.code}</div><p class="sub">מחכים שהמארח יתחיל את המשחק</p></div><div class="card"><h2>שחקנים בחדר</h2>${scoreHtml()}</div><button class="soft" style="width:100%;margin-top:14px;padding:12px" onclick="mpLeave()">יציאה</button>`;
+function sharedView(mine){const S=MP.S,cur=S.players[S.cur];
+ const L=topBar(cur,S.cur)+(S.phase==='turn'?(mine?ctrlCard(cur):discCard(cur)):'')+`<div class="card">${scoreHtml()}</div>`;let R='';
+ if(S.phase==='turn')R=`<h2>הציר של ${cur.n}</h2><div class="tl">${tlHtml(cur,mine?2:1)}</div>`+(mine?dockBtn('אישור','mpConfirmUI()',S.slot==null?'disabled':''):`<p class="note">${cur.n} מנחש/ת עכשיו${cur.on===false?' (מנותק/ת)':''}</p>`+(cur.on===false?`<div class="dock"><button class="big" onclick="mpAct('next')">דלגו על השחקן</button></div>`:''));
+ else if(S.phase==='bonusY')R=(mine?yearUI():waitTxt(cur,'מנחש/ת שנה'))+`<div class="tl">${tlHtml(cur,0)}</div>`;
+ else if(S.phase==='bonusS')R=(mine?optsUI():waitTxt(cur,'בבונוס שיר'))+`<div class="tl">${tlHtml(cur,0)}</div>`;
+ else if(S.phase==='reveal')R=revHtml()+`<h2 style="margin-top:14px">הציר של ${cur.n}</h2><div class="tl">${tlHtml(cur,0)}</div>`+nextBtn();
+ return `<div class="tv-grid"><div class="tv-l">${L}</div><div class="tv-r">${R}</div></div>`}
+function ctrlView(){const S=MP.S,cur=S.players[S.cur];let b=topBar(cur,S.cur);
+ if(S.phase==='turn')b+=ctrlCard(cur)+`<h2 style="margin-top:18px">איפה השיר על הציר?</h2><div class="tl">${tlHtml(cur,2)}</div>`+dockBtn('אישור','mpConfirmUI()',S.slot==null?'disabled':'');
+ else if(S.phase==='bonusY')b+=yearUI();else if(S.phase==='bonusS')b+=optsUI();
+ else if(S.phase==='reveal')b+=revHtml()+`<h2 style="margin-top:14px">הציר שלך</h2><div class="tl">${tlHtml(cur,0)}</div>`+nextBtn();
+ return b}
+function specView(){const S=MP.S,cur=S.players[S.cur],me=plOf()||cur,mi=S.players.indexOf(me);
+ const st=S.phase==='turn'?'מנחש/ת עכשיו':S.phase==='bonusY'?'בבונוס שנה':S.phase==='bonusS'?'בבונוס שיר':'';
+ return topBar(me,mi)+`<div class="card center"><div class="who" style="justify-content:center"><i class="dot" style="background:${COLS[S.cur%4]}"></i>תור של ${cur.n}</div><p class="sub">${st}</p></div>`+(S.phase==='reveal'?revHtml():'')+`<h2 style="margin-top:14px">הציר שלך</h2><div class="tl">${tlHtml(me,0)}</div><div class="card">${scoreHtml()}</div>`}
+function endView(){const S=MP.S,w=S.players[S.cur];return `<i class="fin"></i><div class="center" style="--c:${COLS[S.cur%4]}"><div class="trophy">🏆</div><p class="sub">המנצח/ת</p><div class="name">${w.n}</div><p class="sub">${w.tl.length} שירים</p></div><div class="card">${S.players.slice().sort((a,b)=>b.tl.length-a.tl.length).map(q=>`<div class="sb"><i class="dot" style="background:${COLS[S.players.indexOf(q)%4]}"></i>${q.n}<b>${q.tl.length}</b></div>`).join('')}</div><h2 style="margin-top:14px">הציר המלא של ${w.n}</h2><div class="tl">${tlHtml(w,0)}</div>`+(MP.host?`<div class="dock"><button class="big" onclick="mpAgain()">משחק חדש באותו חדר</button><button class="soft" style="width:100%;margin-top:8px;padding:12px" onclick="mpLeave()">סגירת החדר</button></div>`:'<p class="note">ממתינים למארח...</p>')}
+function mpRender(){const S=MP.S;if(!S)return;const cur=S.players[S.cur],mine=!!cur&&cur.id===MP.me;let h;
+ if(S.phase==='lobby')h=MP.host?lobbyHost():lobbyClient();else if(S.phase==='end')h=endView();else h=MP.host?sharedView(mine):(mine?ctrlView():specView());
+ if(S.phase!==MP.ph||S.cur!==MP.cu){if(S.phase!=='turn'||S.cur!==MP.cu)stopAudio();
+  if(S.phase==='bonusY'&&S.nb){const[a,b]=S.nb;MP.yg=a!=null&&b!=null?Math.round((a+b)/2):(a!=null?a:b!=null?b:2000)}}
+ const ch=S.phase!==MP.ph;MP.ph=S.phase;MP.cu=S.cur;scrollTo(0,0);$('#app').innerHTML=h;
+ if(ch){if(S.phase==='reveal'){const r=S.reveal;if(MP.host){sfx(r.ok?'ok':'bad');if(r.ok)confetti(S.win?90:26)}vib(r.ok?[30,40,30]:[140]);countUp('ry',r.song.y)}
+  else if(S.phase==='end'){if(MP.host){sfx('win');confetti(120)}vib([40,60,40,60,120])}else if(S.phase==='turn')vib(20)}}
+fit();home();{const q=new URLSearchParams(location.search).get('room');if(q){mpMenu();$('#mc').value=q.toUpperCase().slice(0,4)}}
 </script>
 </body>
 </html>
